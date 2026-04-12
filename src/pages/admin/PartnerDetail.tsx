@@ -212,6 +212,49 @@ export default function AdminPartnerDetail() {
     setEditingContactId(null);
   };
 
+  // Document upload
+  const handleUploadStart = () => {
+    if (!uploadFile) return;
+    setIsUploading(true);
+    setUploadProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15 + 5;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        setUploadProgress(100);
+        setTimeout(() => {
+          setIsUploading(false);
+          setShowUploadModal(false);
+          setShowUploadConfirm(true);
+        }, 400);
+      } else {
+        setUploadProgress(Math.round(progress));
+      }
+    }, 300);
+  };
+
+  const handleUploadConfirmOk = () => {
+    if (uploadFile) {
+      const ext = uploadFile.name.split(".").pop()?.toUpperCase() || "FILE";
+      setDocuments((prev) => [
+        ...prev,
+        {
+          id: `pd-${Date.now()}`,
+          fileName: uploadFile.name,
+          type: ext,
+          uploadDate: new Date().toISOString().split("T")[0],
+          uploadedBy: "Sarah Chen",
+        },
+      ]);
+    }
+    setUploadFile(null);
+    setUploadProgress(0);
+    setShowUploadConfirm(false);
+    toast.success("Document added successfully");
+  };
+
   return (
     <div className="space-y-6 max-w-4xl">
       <button onClick={() => navigate("/app/admin/partners")} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
