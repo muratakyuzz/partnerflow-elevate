@@ -11,10 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
 import {
   ArrowLeft, Building2, Mail, Phone, Globe, Zap, Handshake,
   Trash2, Plus, FileText, Users, StickyNote, FolderOpen, Download,
-  Pencil, X, Check, MapPin, Map, Flag, Calendar,
+  Pencil, X, Check, MapPin, Map, Flag, Calendar, Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -111,8 +115,15 @@ export default function AdminPartnerDetail() {
   // Tabs state
   const [contacts, setContacts] = useState<Contact[]>(mockPartnerContacts[partnerId || ""] || []);
   const [notes, setNotes] = useState<Note[]>(mockPartnerNotes[partnerId || ""] || []);
-  const [documents] = useState<PartnerDocument[]>(mockPartnerDocuments[partnerId || ""] || []);
+  const [documents, setDocuments] = useState<PartnerDocument[]>(mockPartnerDocuments[partnerId || ""] || []);
   const [newNote, setNewNote] = useState("");
+
+  // Upload modal state
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showUploadConfirm, setShowUploadConfirm] = useState(false);
 
   // Contact form
   const [contactForm, setContactForm] = useState(emptyContact);
@@ -199,6 +210,49 @@ export default function AdminPartnerDetail() {
     setContactForm(emptyContact);
     setShowContactForm(false);
     setEditingContactId(null);
+  };
+
+  // Document upload
+  const handleUploadStart = () => {
+    if (!uploadFile) return;
+    setIsUploading(true);
+    setUploadProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15 + 5;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        setUploadProgress(100);
+        setTimeout(() => {
+          setIsUploading(false);
+          setShowUploadModal(false);
+          setShowUploadConfirm(true);
+        }, 400);
+      } else {
+        setUploadProgress(Math.round(progress));
+      }
+    }, 300);
+  };
+
+  const handleUploadConfirmOk = () => {
+    if (uploadFile) {
+      const ext = uploadFile.name.split(".").pop()?.toUpperCase() || "FILE";
+      setDocuments((prev) => [
+        ...prev,
+        {
+          id: `pd-${Date.now()}`,
+          fileName: uploadFile.name,
+          type: ext,
+          uploadDate: new Date().toISOString().split("T")[0],
+          uploadedBy: "Sarah Chen",
+        },
+      ]);
+    }
+    setUploadFile(null);
+    setUploadProgress(0);
+    setShowUploadConfirm(false);
+    toast.success("Document added successfully");
   };
 
   return (
@@ -517,7 +571,13 @@ export default function AdminPartnerDetail() {
         </TabsContent>
 
         {/* Documents Tab */}
-        <TabsContent value="documents" className="mt-4">
+        <TabsContent value="documents" className="mt-4 space-y-4">
+          <div className="flex justify-end">
+            <Button size="sm" onClick={() => setShowUploadModal(true)}>
+              <Upload className="h-4 w-4 mr-1" /> Upload Document
+            </Button>
+          </div>
+
           {documents.length === 0 ? (
             <EmptyState
               icon={<FolderOpen className="h-8 w-8 text-muted-foreground" />}
@@ -566,6 +626,65 @@ export default function AdminPartnerDetail() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Upload Document Modal */}
+      <Dialog open={showUploadModal} onOpenChange={(open) => { if (!isUploading) { setShowUploadModal(open); if (!open) { setUploadFile(null); setUploadProgress(0); } } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Upload Document</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select File</Label>
+              <Input
+                type="file"
+                disabled={isUploading}
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="cursor-pointer"
+              />
+            </div>
+            {uploadFile && !isUploading && (
+              <p className="text-sm text-muted-foreground">
+                Selected: <span className="font-medium text-foreground">{uploadFile.name}</span>
+              </p>
+            )}
+            {isUploading && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Uploading...</span>
+                  <span className="font-medium text-foreground">{uploadProgress}%</span>
+                </div>
+                <Progress value={uploadProgress} className="h-2" />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowUploadModal(false); setUploadFile(null); setUploadProgress(0); }} disabled={isUploading}>
+              Cancel
+            </Button>
+            <Button onClick={handleUploadStart} disabled={!uploadFile || isUploading}>
+              <Upload className="h-4 w-4 mr-1" /> Upload
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Upload Confirmation Dialog */}
+      <Dialog open={showUploadConfirm} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Upload Complete</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{uploadFile?.name}</span> has been uploaded successfully.
+          </p>
+          <DialogFooter>
+            <Button onClick={handleUploadConfirmOk}>
+              <Check className="h-4 w-4 mr-1" /> OK
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
