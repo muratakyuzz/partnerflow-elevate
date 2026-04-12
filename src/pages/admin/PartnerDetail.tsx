@@ -115,8 +115,15 @@ export default function AdminPartnerDetail() {
   // Tabs state
   const [contacts, setContacts] = useState<Contact[]>(mockPartnerContacts[partnerId || ""] || []);
   const [notes, setNotes] = useState<Note[]>(mockPartnerNotes[partnerId || ""] || []);
-  const [documents] = useState<PartnerDocument[]>(mockPartnerDocuments[partnerId || ""] || []);
+  const [documents, setDocuments] = useState<PartnerDocument[]>(mockPartnerDocuments[partnerId || ""] || []);
   const [newNote, setNewNote] = useState("");
+
+  // Upload modal state
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showUploadConfirm, setShowUploadConfirm] = useState(false);
 
   // Contact form
   const [contactForm, setContactForm] = useState(emptyContact);
