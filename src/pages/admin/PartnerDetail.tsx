@@ -571,7 +571,13 @@ export default function AdminPartnerDetail() {
         </TabsContent>
 
         {/* Documents Tab */}
-        <TabsContent value="documents" className="mt-4">
+        <TabsContent value="documents" className="mt-4 space-y-4">
+          <div className="flex justify-end">
+            <Button size="sm" onClick={() => setShowUploadModal(true)}>
+              <Upload className="h-4 w-4 mr-1" /> Upload Document
+            </Button>
+          </div>
+
           {documents.length === 0 ? (
             <EmptyState
               icon={<FolderOpen className="h-8 w-8 text-muted-foreground" />}
@@ -620,6 +626,65 @@ export default function AdminPartnerDetail() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Upload Document Modal */}
+      <Dialog open={showUploadModal} onOpenChange={(open) => { if (!isUploading) { setShowUploadModal(open); if (!open) { setUploadFile(null); setUploadProgress(0); } } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Upload Document</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select File</Label>
+              <Input
+                type="file"
+                disabled={isUploading}
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="cursor-pointer"
+              />
+            </div>
+            {uploadFile && !isUploading && (
+              <p className="text-sm text-muted-foreground">
+                Selected: <span className="font-medium text-foreground">{uploadFile.name}</span>
+              </p>
+            )}
+            {isUploading && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Uploading...</span>
+                  <span className="font-medium text-foreground">{uploadProgress}%</span>
+                </div>
+                <Progress value={uploadProgress} className="h-2" />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowUploadModal(false); setUploadFile(null); setUploadProgress(0); }} disabled={isUploading}>
+              Cancel
+            </Button>
+            <Button onClick={handleUploadStart} disabled={!uploadFile || isUploading}>
+              <Upload className="h-4 w-4 mr-1" /> Upload
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Upload Confirmation Dialog */}
+      <Dialog open={showUploadConfirm} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Upload Complete</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{uploadFile?.name}</span> has been uploaded successfully.
+          </p>
+          <DialogFooter>
+            <Button onClick={handleUploadConfirmOk}>
+              <Check className="h-4 w-4 mr-1" /> OK
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
