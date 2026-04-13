@@ -1,7 +1,8 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
-import { StatusBadge } from "@/components/StatusBadge";
+import { Badge } from "@/components/ui/badge";
 import { DollarSign, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -17,10 +18,10 @@ const commissionData = [
   { deal: "D-002", customer: "SecureNet Ltd", revenue: 72000, commission: 14400, status: "Processing" as const, date: "2024-05-01" },
 ];
 
-const statusColorMap: Record<string, "success" | "warning" | "info"> = {
-  Paid: "success",
-  Pending: "warning",
-  Processing: "info",
+const statusStyles: Record<string, string> = {
+  Paid: "bg-success/10 text-success border-success/20",
+  Pending: "bg-warning/10 text-warning border-warning/20",
+  Processing: "bg-info/10 text-info border-info/20",
 };
 
 export default function PartnerFinance() {
@@ -87,7 +88,9 @@ export default function PartnerFinance() {
                   <TableCell className="text-foreground">€{row.revenue.toLocaleString()}</TableCell>
                   <TableCell className="text-foreground">€{row.commission.toLocaleString()}</TableCell>
                   <TableCell>
-                    <StatusBadge status={statusColorMap[row.status] === "success" ? "active" : statusColorMap[row.status] === "warning" ? "SUBMITTED" : "OPEN"} />
+                    <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold", statusStyles[row.status])}>
+                      {row.status}
+                    </span>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{row.date}</TableCell>
                 </TableRow>
