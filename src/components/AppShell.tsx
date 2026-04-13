@@ -26,6 +26,7 @@ import {
   ChevronDown,
   Bell,
   Zap,
+  DollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,6 +53,7 @@ const partnerNav = [
   { title: "Leads", url: "/app/partner/leads", icon: Zap },
   { title: "Deals", url: "/app/partner/deals", icon: Handshake },
   { title: "Documents", url: "/app/partner/documents", icon: FolderOpen },
+  { title: "Finance", url: "/app/partner/finance", icon: DollarSign },
 ];
 
 function SidebarNav() {
