@@ -34,6 +34,7 @@ import PartnerLeadDetail from "./pages/partner/LeadDetail";
 import PartnerDeals from "./pages/partner/Deals";
 import PartnerDealDetail from "./pages/partner/DealDetail";
 import PartnerDocuments from "./pages/partner/Documents";
+import PartnerFinance from "./pages/partner/Finance";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
               <Route path="deals" element={<PartnerDeals />} />
               <Route path="deals/:id" element={<PartnerDealDetail />} />
               <Route path="documents" element={<PartnerDocuments />} />
+              <Route path="finance" element={<PartnerFinance />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
