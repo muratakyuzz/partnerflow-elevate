@@ -63,7 +63,7 @@ function SidebarNav() {
   const items = role === "admin" ? adminNav : partnerNav;
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
+    <Sidebar collapsible="icon" className="border-r-0 shadow-elevated">
       <div className="flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border">
         <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm shrink-0">
           P
@@ -127,7 +127,7 @@ function Topbar() {
   const navigate = useNavigate();
 
   return (
-    <header className="h-14 border-b bg-card flex items-center justify-between px-4 shrink-0">
+    <header className="h-14 border-b glass-subtle flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-2">
         <SidebarTrigger className="text-muted-foreground" />
       </div>
