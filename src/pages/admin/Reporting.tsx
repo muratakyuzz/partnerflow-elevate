@@ -1,22 +1,30 @@
+import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, TrendingUp, Users, Handshake, ArrowUpRight, ArrowDownRight } from "lucide-react";
-
-const monthlyLeadData = [
-  { month: "Jan 2025", submitted: 42, approved: 35, rejected: 7, conversionRate: "83%" },
-  { month: "Feb 2025", submitted: 56, approved: 48, rejected: 8, conversionRate: "86%" },
-  { month: "Mar 2025", submitted: 63, approved: 51, rejected: 12, conversionRate: "81%" },
-  { month: "Apr 2025", submitted: 71, approved: 62, rejected: 9, conversionRate: "87%" },
-];
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { BarChart3, TrendingUp, Users, Handshake, ArrowUpRight, ArrowDownRight, SlidersHorizontal, Columns3, Search } from "lucide-react";
 
 const partnerPerformance = [
-  { partner: "TechVision Ltd.", leads: 28, deals: 12, revenue: "$485,000", trend: "up" },
-  { partner: "CloudNet Solutions", leads: 22, deals: 9, revenue: "$362,000", trend: "up" },
-  { partner: "DataBridge Corp.", leads: 18, deals: 6, revenue: "$198,000", trend: "down" },
-  { partner: "InnoSoft Inc.", leads: 15, deals: 8, revenue: "$310,000", trend: "up" },
-  { partner: "SmartEdge Tech", leads: 12, deals: 4, revenue: "$145,000", trend: "down" },
+  { partner: "TechVision Ltd.", leads: 28, deals: 12, revenue: "$485,000", trend: "up" as const },
+  { partner: "CloudNet Solutions", leads: 22, deals: 9, revenue: "$362,000", trend: "up" as const },
+  { partner: "DataBridge Corp.", leads: 18, deals: 6, revenue: "$198,000", trend: "down" as const },
+  { partner: "InnoSoft Inc.", leads: 15, deals: 8, revenue: "$310,000", trend: "up" as const },
+  { partner: "SmartEdge Tech", leads: 12, deals: 4, revenue: "$145,000", trend: "down" as const },
+];
+
+type ColumnKey = "partner" | "leads" | "deals" | "revenue" | "trend";
+
+const allColumns: { key: ColumnKey; label: string }[] = [
+  { key: "partner", label: "Partner" },
+  { key: "leads", label: "Leads" },
+  { key: "deals", label: "Deals" },
+  { key: "revenue", label: "Revenue" },
+  { key: "trend", label: "Trend" },
 ];
 
 const kpis = [
@@ -27,6 +35,37 @@ const kpis = [
 ];
 
 export default function Reporting() {
+  const [visibleColumns, setVisibleColumns] = useState<Set<ColumnKey>>(
+    new Set(allColumns.map((c) => c.key))
+  );
+  const [filters, setFilters] = useState<Record<string, string>>({});
+
+  const toggleColumn = (key: ColumnKey) => {
+    setVisibleColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        if (next.size > 1) next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
+  const filtered = useMemo(() => {
+    return partnerPerformance.filter((row) => {
+      for (const key of Object.keys(filters) as ColumnKey[]) {
+        const q = filters[key]?.toLowerCase();
+        if (!q) continue;
+        const val = String(row[key]).toLowerCase();
+        if (!val.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [filters]);
+
+  const activeColumns = allColumns.filter((c) => visibleColumns.has(c.key));
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -60,77 +99,103 @@ export default function Reporting() {
         ))}
       </div>
 
-      {/* Report 1: Monthly Lead Report */}
+      {/* Partner Performance Report */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Monthly Lead Report</CardTitle>
-          <CardDescription>Lead submission and approval statistics</CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle className="text-lg">Partner Performance Report</CardTitle>
+            <CardDescription>Partner ranking by leads, deals and revenue</CardDescription>
+          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Columns3 className="h-4 w-4" />
+                Columns
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-48 p-2">
+              <p className="text-xs font-medium text-muted-foreground mb-2 px-2">Toggle columns</p>
+              {allColumns.map((col) => (
+                <label
+                  key={col.key}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted cursor-pointer text-sm"
+                >
+                  <Checkbox
+                    checked={visibleColumns.has(col.key)}
+                    onCheckedChange={() => toggleColumn(col.key)}
+                  />
+                  {col.label}
+                </label>
+              ))}
+            </PopoverContent>
+          </Popover>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Month</TableHead>
-                <TableHead className="text-right">Submitted</TableHead>
-                <TableHead className="text-right">Approved</TableHead>
-                <TableHead className="text-right">Rejected</TableHead>
-                <TableHead className="text-right">Conversion Rate</TableHead>
+                {activeColumns.map((col) => (
+                  <TableHead key={col.key} className={col.key !== "partner" ? "text-right" : ""}>
+                    {col.label}
+                  </TableHead>
+                ))}
+              </TableRow>
+              <TableRow className="hover:bg-transparent border-b">
+                {activeColumns.map((col) => (
+                  <TableHead key={`filter-${col.key}`} className="py-1.5 px-2">
+                    <div className="relative">
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                      <Input
+                        placeholder={`Filter...`}
+                        value={filters[col.key] || ""}
+                        onChange={(e) =>
+                          setFilters((prev) => ({ ...prev, [col.key]: e.target.value }))
+                        }
+                        className="h-7 pl-7 text-xs"
+                      />
+                    </div>
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {monthlyLeadData.map((row) => (
-                <TableRow key={row.month}>
-                  <TableCell className="font-medium">{row.month}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.submitted}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.approved}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.rejected}</TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant="secondary" className="font-mono">{row.conversionRate}</Badge>
+              {filtered.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={activeColumns.length} className="text-center py-12 text-muted-foreground">
+                    No results found
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Report 2: Partner Performance */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Partner Performance Report</CardTitle>
-          <CardDescription>Partner ranking by leads, deals and revenue</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Partner</TableHead>
-                <TableHead className="text-right">Lead</TableHead>
-                <TableHead className="text-right">Deal</TableHead>
-                <TableHead className="text-right">Revenue</TableHead>
-                <TableHead className="text-right">Trend</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {partnerPerformance.map((row) => (
-                <TableRow key={row.partner}>
-                  <TableCell className="font-medium">{row.partner}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.leads}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.deals}</TableCell>
-                  <TableCell className="text-right tabular-nums font-medium">{row.revenue}</TableCell>
-                  <TableCell className="text-right">
-                    {row.trend === "up" ? (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20">
-                        <ArrowUpRight className="h-3 w-3 mr-1" /> Rising
-                      </Badge>
-                    ) : (
-                      <Badge className="bg-red-500/10 text-red-600 border-red-500/20 hover:bg-red-500/20">
-                        <ArrowDownRight className="h-3 w-3 mr-1" /> Declining
-                      </Badge>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+              ) : (
+                filtered.map((row) => (
+                  <TableRow key={row.partner}>
+                    {activeColumns.map((col) => {
+                      if (col.key === "partner") {
+                        return <TableCell key={col.key} className="font-medium">{row.partner}</TableCell>;
+                      }
+                      if (col.key === "trend") {
+                        return (
+                          <TableCell key={col.key} className="text-right">
+                            {row.trend === "up" ? (
+                              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20">
+                                <ArrowUpRight className="h-3 w-3 mr-1" /> Rising
+                              </Badge>
+                            ) : (
+                              <Badge className="bg-red-500/10 text-red-600 border-red-500/20 hover:bg-red-500/20">
+                                <ArrowDownRight className="h-3 w-3 mr-1" /> Declining
+                              </Badge>
+                            )}
+                          </TableCell>
+                        );
+                      }
+                      return (
+                        <TableCell key={col.key} className="text-right tabular-nums font-medium">
+                          {String(row[col.key])}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
