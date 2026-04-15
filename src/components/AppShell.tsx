@@ -22,6 +22,7 @@ import {
   FileText,
   Handshake,
   FolderOpen,
+  BarChart3,
   LogOut,
   ChevronDown,
   Bell,
@@ -46,6 +47,7 @@ const adminNav = [
   { title: "Leads", url: "/app/admin/leads", icon: Zap },
   { title: "Deals", url: "/app/admin/deals", icon: Handshake },
   { title: "Documents", url: "/app/admin/documents", icon: FolderOpen },
+  { title: "Reporting", url: "/app/admin/reporting", icon: BarChart3 },
 ];
 
 const partnerNav = [
