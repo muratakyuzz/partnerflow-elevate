@@ -5,25 +5,25 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, TrendingUp, Users, Handshake, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 const monthlyLeadData = [
-  { month: "Ocak 2025", submitted: 42, approved: 35, rejected: 7, conversionRate: "83%" },
-  { month: "Şubat 2025", submitted: 56, approved: 48, rejected: 8, conversionRate: "86%" },
-  { month: "Mart 2025", submitted: 63, approved: 51, rejected: 12, conversionRate: "81%" },
-  { month: "Nisan 2025", submitted: 71, approved: 62, rejected: 9, conversionRate: "87%" },
+  { month: "Jan 2025", submitted: 42, approved: 35, rejected: 7, conversionRate: "83%" },
+  { month: "Feb 2025", submitted: 56, approved: 48, rejected: 8, conversionRate: "86%" },
+  { month: "Mar 2025", submitted: 63, approved: 51, rejected: 12, conversionRate: "81%" },
+  { month: "Apr 2025", submitted: 71, approved: 62, rejected: 9, conversionRate: "87%" },
 ];
 
 const partnerPerformance = [
-  { partner: "TechVision Ltd.", leads: 28, deals: 12, revenue: "₺485,000", trend: "up" },
-  { partner: "CloudNet Solutions", leads: 22, deals: 9, revenue: "₺362,000", trend: "up" },
-  { partner: "DataBridge Corp.", leads: 18, deals: 6, revenue: "₺198,000", trend: "down" },
-  { partner: "InnoSoft A.Ş.", leads: 15, deals: 8, revenue: "₺310,000", trend: "up" },
-  { partner: "SmartEdge Tech", leads: 12, deals: 4, revenue: "₺145,000", trend: "down" },
+  { partner: "TechVision Ltd.", leads: 28, deals: 12, revenue: "$485,000", trend: "up" },
+  { partner: "CloudNet Solutions", leads: 22, deals: 9, revenue: "$362,000", trend: "up" },
+  { partner: "DataBridge Corp.", leads: 18, deals: 6, revenue: "$198,000", trend: "down" },
+  { partner: "InnoSoft Inc.", leads: 15, deals: 8, revenue: "$310,000", trend: "up" },
+  { partner: "SmartEdge Tech", leads: 12, deals: 4, revenue: "$145,000", trend: "down" },
 ];
 
 const kpis = [
-  { label: "Toplam Lead", value: "232", change: "+18%", icon: TrendingUp, positive: true },
-  { label: "Aktif Partner", value: "24", change: "+3", icon: Users, positive: true },
-  { label: "Kapanan Deal", value: "39", change: "+12%", icon: Handshake, positive: true },
-  { label: "Toplam Gelir", value: "₺1.5M", change: "+22%", icon: BarChart3, positive: true },
+  { label: "Total Leads", value: "232", change: "+18%", icon: TrendingUp, positive: true },
+  { label: "Active Partners", value: "24", change: "+3", icon: Users, positive: true },
+  { label: "Closed Deals", value: "39", change: "+12%", icon: Handshake, positive: true },
+  { label: "Total Revenue", value: "$1.5M", change: "+22%", icon: BarChart3, positive: true },
 ];
 
 export default function Reporting() {
@@ -31,7 +31,7 @@ export default function Reporting() {
     <div className="space-y-6">
       <PageHeader
         title="Reporting"
-        subtitle="Partner ekosistemi performans raporları"
+        subtitle="Partner ecosystem performance reports"
       />
 
       {/* KPI Cards */}
@@ -53,7 +53,7 @@ export default function Reporting() {
                 <span className={`text-xs font-medium ${kpi.positive ? "text-emerald-500" : "text-red-500"}`}>
                   {kpi.change}
                 </span>
-                <span className="text-xs text-muted-foreground ml-1">bu ay</span>
+                <span className="text-xs text-muted-foreground ml-1">this month</span>
               </div>
             </CardContent>
           </Card>
@@ -63,18 +63,18 @@ export default function Reporting() {
       {/* Report 1: Monthly Lead Report */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Aylık Lead Raporu</CardTitle>
-          <CardDescription>Lead gönderim ve onay istatistikleri</CardDescription>
+          <CardTitle className="text-lg">Monthly Lead Report</CardTitle>
+          <CardDescription>Lead submission and approval statistics</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Ay</TableHead>
-                <TableHead className="text-right">Gönderilen</TableHead>
-                <TableHead className="text-right">Onaylanan</TableHead>
-                <TableHead className="text-right">Reddedilen</TableHead>
-                <TableHead className="text-right">Dönüşüm Oranı</TableHead>
+                <TableHead>Month</TableHead>
+                <TableHead className="text-right">Submitted</TableHead>
+                <TableHead className="text-right">Approved</TableHead>
+                <TableHead className="text-right">Rejected</TableHead>
+                <TableHead className="text-right">Conversion Rate</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,8 +97,8 @@ export default function Reporting() {
       {/* Report 2: Partner Performance */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Partner Performans Raporu</CardTitle>
-          <CardDescription>Partnerlerin lead, deal ve gelir bazlı sıralaması</CardDescription>
+          <CardTitle className="text-lg">Partner Performance Report</CardTitle>
+          <CardDescription>Partner ranking by leads, deals and revenue</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -107,7 +107,7 @@ export default function Reporting() {
                 <TableHead>Partner</TableHead>
                 <TableHead className="text-right">Lead</TableHead>
                 <TableHead className="text-right">Deal</TableHead>
-                <TableHead className="text-right">Gelir</TableHead>
+                <TableHead className="text-right">Revenue</TableHead>
                 <TableHead className="text-right">Trend</TableHead>
               </TableRow>
             </TableHeader>
@@ -121,11 +121,11 @@ export default function Reporting() {
                   <TableCell className="text-right">
                     {row.trend === "up" ? (
                       <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20">
-                        <ArrowUpRight className="h-3 w-3 mr-1" /> Yükseliş
+                        <ArrowUpRight className="h-3 w-3 mr-1" /> Rising
                       </Badge>
                     ) : (
                       <Badge className="bg-red-500/10 text-red-600 border-red-500/20 hover:bg-red-500/20">
-                        <ArrowDownRight className="h-3 w-3 mr-1" /> Düşüş
+                        <ArrowDownRight className="h-3 w-3 mr-1" /> Declining
                       </Badge>
                     )}
                   </TableCell>
