@@ -507,7 +507,7 @@ export default function Configure() {
     <div className="space-y-6">
       <PageHeader
         title="Configure"
-        description="Manage platform settings, onboarding, partner configuration, and products."
+        subtitle="Manage platform settings, onboarding, partner configuration, and products."
       />
 
       <Tabs defaultValue="onboarding" className="space-y-6">
