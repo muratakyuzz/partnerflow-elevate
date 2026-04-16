@@ -32,6 +32,7 @@ interface PartnerType {
   id: string;
   name: string;
   description: string;
+  tierEnabled: boolean;
 }
 
 interface PartnerTier {
@@ -59,9 +60,9 @@ const initialSteps: OnboardingStep[] = [
 ];
 
 const initialPartnerTypes: PartnerType[] = [
-  { id: "pt1", name: "Referral", description: "Refers leads and earns commission" },
-  { id: "pt2", name: "Reseller", description: "Sells products directly to end customers" },
-  { id: "pt3", name: "Technology", description: "Integrates technology solutions" },
+  { id: "pt1", name: "Referral", description: "Refers leads and earns commission", tierEnabled: false },
+  { id: "pt2", name: "Reseller", description: "Sells products directly to end customers", tierEnabled: true },
+  { id: "pt3", name: "Technology", description: "Integrates technology solutions", tierEnabled: false },
 ];
 
 const initialPartnerTiers: PartnerTier[] = [
@@ -246,15 +247,15 @@ function PartnerConfigTab() {
   // Type dialog
   const [typeDialogOpen, setTypeDialogOpen] = useState(false);
   const [editingType, setEditingType] = useState<PartnerType | null>(null);
-  const [typeForm, setTypeForm] = useState({ name: "", description: "" });
+  const [typeForm, setTypeForm] = useState({ name: "", description: "", tierEnabled: false });
 
   // Tier dialog
   const [tierDialogOpen, setTierDialogOpen] = useState(false);
   const [editingTier, setEditingTier] = useState<PartnerTier | null>(null);
   const [tierForm, setTierForm] = useState({ name: "", minRevenue: "", benefits: "" });
 
-  const openAddType = () => { setEditingType(null); setTypeForm({ name: "", description: "" }); setTypeDialogOpen(true); };
-  const openEditType = (t: PartnerType) => { setEditingType(t); setTypeForm({ name: t.name, description: t.description }); setTypeDialogOpen(true); };
+  const openAddType = () => { setEditingType(null); setTypeForm({ name: "", description: "", tierEnabled: false }); setTypeDialogOpen(true); };
+  const openEditType = (t: PartnerType) => { setEditingType(t); setTypeForm({ name: t.name, description: t.description, tierEnabled: t.tierEnabled }); setTypeDialogOpen(true); };
   const saveType = () => {
     if (!typeForm.name.trim()) return;
     if (editingType) {
@@ -281,6 +282,8 @@ function PartnerConfigTab() {
   };
   const removeTier = (id: string) => { setTiers((p) => p.filter((t) => t.id !== id)); toast({ title: "Tier removed" }); };
 
+  const hasTierEnabledType = types.some((t) => t.tierEnabled);
+
   return (
     <div className="space-y-8">
       {/* Partner Types */}
@@ -298,14 +301,18 @@ function PartnerConfigTab() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Description</TableHead>
+                <TableHead>Tier Enabled</TableHead>
                 <TableHead className="w-24 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {types.length === 0 ? <EmptyRow cols={3} text="No partner types." /> : types.map((t) => (
+              {types.length === 0 ? <EmptyRow cols={4} text="No partner types." /> : types.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell className="font-medium">{t.name}</TableCell>
                   <TableCell className="hidden md:table-cell text-muted-foreground text-sm">{t.description}</TableCell>
+                  <TableCell>
+                    <Badge variant={t.tierEnabled ? "default" : "secondary"}>{t.tierEnabled ? "Yes" : "No"}</Badge>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditType(t)}><Pencil className="h-3.5 w-3.5" /></Button>
@@ -319,8 +326,8 @@ function PartnerConfigTab() {
         </CardContent>
       </Card>
 
-      {/* Partner Tiers */}
-      <Card>
+      {/* Partner Tiers — only shown when at least one type has tiers enabled */}
+      {hasTierEnabledType && <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <div>
             <CardTitle className="text-base">Partner Tiers</CardTitle>
@@ -355,7 +362,7 @@ function PartnerConfigTab() {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+      </Card>}
 
       {/* Type Dialog */}
       <Dialog open={typeDialogOpen} onOpenChange={setTypeDialogOpen}>
@@ -366,6 +373,10 @@ function PartnerConfigTab() {
           <div className="space-y-4 py-2">
             <div className="space-y-2"><Label>Name</Label><Input value={typeForm.name} onChange={(e) => setTypeForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Reseller" /></div>
             <div className="space-y-2"><Label>Description</Label><Textarea value={typeForm.description} onChange={(e) => setTypeForm((f) => ({ ...f, description: e.target.value }))} rows={2} /></div>
+            <div className="flex items-center gap-3">
+              <Switch checked={typeForm.tierEnabled} onCheckedChange={(checked) => setTypeForm((f) => ({ ...f, tierEnabled: checked }))} />
+              <Label>Enable Tier System</Label>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setTypeDialogOpen(false)}>Cancel</Button>
