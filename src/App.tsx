@@ -69,6 +69,7 @@ const App = () => (
               <Route path="documents" element={<AdminDocuments />} />
               <Route path="documents/upload" element={<AdminDocumentUpload />} />
               <Route path="reporting" element={<AdminReporting />} />
+              <Route path="configure" element={<AdminConfigure />} />
             </Route>
 
             {/* Partner routes */}
