@@ -282,6 +282,8 @@ function PartnerConfigTab() {
   };
   const removeTier = (id: string) => { setTiers((p) => p.filter((t) => t.id !== id)); toast({ title: "Tier removed" }); };
 
+  const hasTierEnabledType = types.some((t) => t.tierEnabled);
+
   return (
     <div className="space-y-8">
       {/* Partner Types */}
@@ -361,6 +363,7 @@ function PartnerConfigTab() {
           </Table>
         </CardContent>
       </Card>
+      </Card>}
 
       {/* Type Dialog */}
       <Dialog open={typeDialogOpen} onOpenChange={setTypeDialogOpen}>
@@ -371,6 +374,10 @@ function PartnerConfigTab() {
           <div className="space-y-4 py-2">
             <div className="space-y-2"><Label>Name</Label><Input value={typeForm.name} onChange={(e) => setTypeForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Reseller" /></div>
             <div className="space-y-2"><Label>Description</Label><Textarea value={typeForm.description} onChange={(e) => setTypeForm((f) => ({ ...f, description: e.target.value }))} rows={2} /></div>
+            <div className="flex items-center gap-3">
+              <Switch checked={typeForm.tierEnabled} onCheckedChange={(checked) => setTypeForm((f) => ({ ...f, tierEnabled: checked }))} />
+              <Label>Enable Tier System</Label>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setTypeDialogOpen(false)}>Cancel</Button>
