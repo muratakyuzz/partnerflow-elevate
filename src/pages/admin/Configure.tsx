@@ -60,9 +60,9 @@ const initialSteps: OnboardingStep[] = [
 ];
 
 const initialPartnerTypes: PartnerType[] = [
-  { id: "pt1", name: "Referral", description: "Refers leads and earns commission" },
-  { id: "pt2", name: "Reseller", description: "Sells products directly to end customers" },
-  { id: "pt3", name: "Technology", description: "Integrates technology solutions" },
+  { id: "pt1", name: "Referral", description: "Refers leads and earns commission", tierEnabled: false },
+  { id: "pt2", name: "Reseller", description: "Sells products directly to end customers", tierEnabled: true },
+  { id: "pt3", name: "Technology", description: "Integrates technology solutions", tierEnabled: false },
 ];
 
 const initialPartnerTiers: PartnerTier[] = [
