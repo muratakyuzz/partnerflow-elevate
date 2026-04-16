@@ -50,6 +50,10 @@ const adminNav = [
   { title: "Reporting", url: "/app/admin/reporting", icon: BarChart3 },
 ];
 
+const adminConfigNav = [
+  { title: "Configure", url: "/app/admin/configure", icon: Settings2 },
+];
+
 const partnerNav = [
   { title: "Dashboard", url: "/app/partner/dashboard", icon: LayoutDashboard },
   { title: "Leads", url: "/app/partner/leads", icon: Zap },
