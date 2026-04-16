@@ -32,6 +32,7 @@ interface PartnerType {
   id: string;
   name: string;
   description: string;
+  tierEnabled: boolean;
 }
 
 interface PartnerTier {
