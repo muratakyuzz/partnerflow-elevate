@@ -137,7 +137,7 @@ function SidebarNav() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-        )
+        )}
       </SidebarContent>
 
       <SidebarFooter className="px-2 pb-4">
