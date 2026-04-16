@@ -26,6 +26,7 @@ import AdminDealDetail from "./pages/admin/DealDetail";
 import AdminDocuments from "./pages/admin/Documents";
 import AdminDocumentUpload from "./pages/admin/DocumentUpload";
 import AdminReporting from "./pages/admin/Reporting";
+import AdminConfigure from "./pages/admin/Configure";
 
 // Partner pages
 import PartnerDashboard from "./pages/partner/Dashboard";
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="documents" element={<AdminDocuments />} />
               <Route path="documents/upload" element={<AdminDocumentUpload />} />
               <Route path="reporting" element={<AdminReporting />} />
+              <Route path="configure" element={<AdminConfigure />} />
             </Route>
 
             {/* Partner routes */}

@@ -28,6 +28,7 @@ import {
   Bell,
   Zap,
   DollarSign,
+  Settings2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +49,10 @@ const adminNav = [
   { title: "Deals", url: "/app/admin/deals", icon: Handshake },
   { title: "Documents", url: "/app/admin/documents", icon: FolderOpen },
   { title: "Reporting", url: "/app/admin/reporting", icon: BarChart3 },
+];
+
+const adminConfigNav = [
+  { title: "Configure", url: "/app/admin/configure", icon: Settings2 },
 ];
 
 const partnerNav = [
@@ -103,6 +108,36 @@ function SidebarNav() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Config section — visually separated */}
+        {role === "admin" && (
+          <SidebarGroup>
+            <div className="mx-3 my-2 border-t border-sidebar-border" />
+            {!collapsed && (
+              <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-sidebar-muted font-semibold px-3 mb-1">
+                Settings
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminConfigNav.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.url}
+                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                        activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      >
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="px-2 pb-4">
