@@ -362,7 +362,6 @@ function PartnerConfigTab() {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
       </Card>}
 
       {/* Type Dialog */}
