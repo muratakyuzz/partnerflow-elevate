@@ -247,15 +247,15 @@ function PartnerConfigTab() {
   // Type dialog
   const [typeDialogOpen, setTypeDialogOpen] = useState(false);
   const [editingType, setEditingType] = useState<PartnerType | null>(null);
-  const [typeForm, setTypeForm] = useState({ name: "", description: "" });
+  const [typeForm, setTypeForm] = useState({ name: "", description: "", tierEnabled: false });
 
   // Tier dialog
   const [tierDialogOpen, setTierDialogOpen] = useState(false);
   const [editingTier, setEditingTier] = useState<PartnerTier | null>(null);
   const [tierForm, setTierForm] = useState({ name: "", minRevenue: "", benefits: "" });
 
-  const openAddType = () => { setEditingType(null); setTypeForm({ name: "", description: "" }); setTypeDialogOpen(true); };
-  const openEditType = (t: PartnerType) => { setEditingType(t); setTypeForm({ name: t.name, description: t.description }); setTypeDialogOpen(true); };
+  const openAddType = () => { setEditingType(null); setTypeForm({ name: "", description: "", tierEnabled: false }); setTypeDialogOpen(true); };
+  const openEditType = (t: PartnerType) => { setEditingType(t); setTypeForm({ name: t.name, description: t.description, tierEnabled: t.tierEnabled }); setTypeDialogOpen(true); };
   const saveType = () => {
     if (!typeForm.name.trim()) return;
     if (editingType) {
@@ -299,14 +299,18 @@ function PartnerConfigTab() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Description</TableHead>
+                <TableHead>Tier Enabled</TableHead>
                 <TableHead className="w-24 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {types.length === 0 ? <EmptyRow cols={3} text="No partner types." /> : types.map((t) => (
+              {types.length === 0 ? <EmptyRow cols={4} text="No partner types." /> : types.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell className="font-medium">{t.name}</TableCell>
                   <TableCell className="hidden md:table-cell text-muted-foreground text-sm">{t.description}</TableCell>
+                  <TableCell>
+                    <Badge variant={t.tierEnabled ? "default" : "secondary"}>{t.tierEnabled ? "Yes" : "No"}</Badge>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditType(t)}><Pencil className="h-3.5 w-3.5" /></Button>
@@ -320,8 +324,8 @@ function PartnerConfigTab() {
         </CardContent>
       </Card>
 
-      {/* Partner Tiers */}
-      <Card>
+      {/* Partner Tiers — only shown when at least one type has tiers enabled */}
+      {hasTierEnabledType && <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <div>
             <CardTitle className="text-base">Partner Tiers</CardTitle>
