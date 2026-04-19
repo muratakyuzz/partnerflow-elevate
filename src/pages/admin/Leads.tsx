@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge } from "@/components/StatusBadge";
+import { Button } from "@/components/ui/button";
 import { mockLeads, type Lead, type LeadStatus } from "@/lib/mock-data";
-import { Plus } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
+import * as XLSX from "xlsx";
 
 const columns: Column<Lead>[] = [
   { key: "id", header: "ID", render: (l) => <span className="font-mono text-xs text-muted-foreground">{l.id}</span>, className: "w-24" },
