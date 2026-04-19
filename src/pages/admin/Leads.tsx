@@ -35,11 +35,33 @@ export default function AdminLeads() {
     count: s === "ALL" ? mockLeads.length : mockLeads.filter((l) => l.status === s).length,
   }));
 
+  const handleExport = () => {
+    const rows = filtered.map((l) => ({
+      ID: l.id,
+      Lead: l.title,
+      Company: l.companyName,
+      Partner: l.partnerName,
+      Contact: l.contactName,
+      "Estimated Value": l.estimatedValue,
+      Status: l.status,
+      Updated: l.updatedAt,
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Leads");
+    XLSX.writeFile(wb, `leads-${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Leads"
         subtitle="Review and manage partner-submitted leads"
+        action={{
+          label: "Export to Excel",
+          onClick: handleExport,
+          icon: <FileSpreadsheet className="h-4 w-4" />,
+        }}
       />
       <DataTable
         data={filtered}
